@@ -1,6 +1,8 @@
 const userModel=require('../models/user.model')
 const userService=require('../services/user.service')
 const {validationResult}=require('express-validator')
+const cookieParser=require('cookie-parser')
+const blacklistTokenModel=require('../models/blacklistToken.model')
 module.exports.registerUser=async(req,res,next)=>{
     const errors=validationResult(req)
     if(!errors.isEmpty()){
@@ -41,8 +43,24 @@ module.exports.loginUser=async(req,res,next)=>{
         return res.status(401).json({message:"Invalid email or password"})
     }
     const token =user.generateAuthToken()
+    res.cookie('token',token)
     const userResponse=user.toObject()
     delete userResponse.password
 
     res.status(200).json({token,user:userResponse})
+}
+
+module.exports.getUserProfile=async(req,res,next)=>{
+    //paticular user jo logged in ho ushi user ko profile dhikna cahiye 
+    //for this we use middleware
+    res.status(200).json(req.user)
+}
+
+module.exports.logoutUser=async(req,res,next)=>{
+    res.clearCookie('token')
+    const token=req.cookies.token || req.headers.authorization.split(' ')[ 1 ]
+    await blacklistTokenModel({token})
+
+    res.status(200).json({message:'Logged Out'})
+
 }

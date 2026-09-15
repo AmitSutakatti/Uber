@@ -2,6 +2,7 @@ const express=require('express')
 const router=express.Router()
 //user ko register karne se pehele kuch data frontend se Ayega tho usko validate karne keliye we use : express-Validator package
 const userController=require('../controllers/user.controller')
+const authMiddleware=require('../middlewares/auth.middleware')
 const {body}=require('express-validator')
 router.post('/register',[
     body('email').isEmail().withMessage('Invalid Email'),
@@ -18,4 +19,7 @@ router.post('/login',[
 
 ],userController.loginUser)
 
+
+router.get('/profile',authMiddleware.authUser,userController.getUserProfile)
+router.get('/logout',authMiddleware.authUser,userController.logoutUser)
 module.exports=router

@@ -173,3 +173,94 @@ Returned when the email does not exist or the password is incorrect.
   "message": "Invalid email or password"
 }
 ```
+
+## Get User Profile
+
+Returns the profile of the currently authenticated user.
+
+### Endpoint
+
+```http
+GET /users/profile
+```
+
+### Authentication
+
+Provide the token in either of these ways:
+
+#### Token Cookie
+
+The login endpoint sets a `token` cookie automatically.
+
+#### Authorization Header
+
+```http
+Authorization: Bearer JWT_TOKEN
+```
+
+### Successful Response
+
+**Status:** `200 OK`
+
+```json
+{
+  "_id": "USER_ID",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com"
+}
+```
+
+### Error Response
+
+**Status:** `401 Unauthorized`
+
+Returned when the token is missing, invalid, expired, or blacklisted.
+
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+
+## Logout User
+
+Logs out the authenticated user by clearing the `token` cookie and invalidating the token.
+
+### Endpoint
+
+```http
+GET /users/logout
+```
+
+### Authentication
+
+Authentication is required. Use the `token` cookie or the following header:
+
+```http
+Authorization: Bearer JWT_TOKEN
+```
+
+### Successful Response
+
+**Status:** `200 OK`
+
+```json
+{
+  "message": "Logged Out"
+}
+```
+
+### Error Response
+
+**Status:** `401 Unauthorized`
+
+Returned when the token is missing, invalid, expired, or blacklisted.
+
+```json
+{
+  "message": "Unauthorized access"
+}
+```
