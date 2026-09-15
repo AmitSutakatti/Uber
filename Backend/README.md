@@ -50,7 +50,7 @@ All fields are required:
 
 **Status:** `201 Created`
 
-```json
+```jsonm
 {
   "token": "JWT_TOKEN",
   "user": {
@@ -83,5 +83,93 @@ Returned when one or more request fields fail validation.
       "location": "body"
     }
   ]
+}
+```
+
+## Login User
+
+Authenticates an existing user and returns an authentication token and user details.
+
+### Endpoint
+
+```http
+POST /users/login
+```
+
+The default server URL is:
+
+```text
+http://localhost:3000/users/login
+```
+
+### Request Headers
+
+```http
+Content-Type: application/json
+```
+
+### Request Body
+
+Both fields are required:
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "secret123"
+}
+```
+
+#### Validation Rules
+
+| Field | Requirement |
+| --- | --- |
+| `email` | Must be a valid email address |
+| `password` | At least 6 characters |
+
+### Successful Response
+
+**Status:** `200 OK`
+
+```json
+{
+  "token": "JWT_TOKEN",
+  "user": {
+    "_id": "USER_ID",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+  }
+}
+```
+
+### Error Responses
+
+**Status:** `400 Bad Request`
+
+Returned when the email or password fails validation.
+
+```json
+{
+  "errors": [
+    {
+      "type": "field",
+      "value": "invalid-email",
+      "msg": "Invalid Email",
+      "path": "email",
+      "location": "body"
+    }
+  ]
+}
+```
+
+**Status:** `401 Unauthorized`
+
+Returned when the email does not exist or the password is incorrect.
+
+```json
+{
+  "message": "Invalid email or password"
 }
 ```
