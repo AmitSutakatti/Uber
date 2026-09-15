@@ -338,14 +338,157 @@ Duplicate email example:
 }
 ```
 
-## Logout User
+## Captain Login
 
-Logs out the authenticated user by clearing the `token` cookie and invalidating the token.
+Authenticates an existing captain and returns an authentication token and captain details.
 
 ### Endpoint
 
 ```http
-GET /users/logout
+POST /captians/login
+```
+
+The default server URL is:
+
+```text
+http://localhost:3000/captians/login
+```
+
+### Request Headers
+
+```http
+Content-Type: application/json
+```
+
+### Request Body
+
+Both fields are required:
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "secret123"
+}
+```
+
+#### Validation Rules
+
+| Field | Requirement |
+| --- | --- |
+| `email` | Must be a valid email address |
+| `password` | At least 6 characters |
+
+### Successful Response
+
+**Status:** `200 OK`
+
+The response also sets a `token` cookie.
+
+```json
+{
+  "token": "JWT_TOKEN",
+  "captian": {
+    "_id": "CAPTAIN_ID",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "vehicle": {
+      "color": "black",
+      "plate": "AB12CD3456",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"
+  }
+}
+```
+
+### Error Responses
+
+**Status:** `400 Bad Request`
+
+Returned when the email or password fails validation.
+
+**Status:** `401 Unauthorized`
+
+Returned when the email does not exist or the password is incorrect.
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+## Captain Profile
+
+Returns the profile of the currently authenticated captain.
+
+### Endpoint
+
+```http
+GET /captians/profile
+```
+
+### Authentication
+
+Provide the token in either of these ways:
+
+#### Token Cookie
+
+The captain login endpoint sets a `token` cookie automatically.
+
+#### Authorization Header
+
+```http
+Authorization: Bearer JWT_TOKEN
+```
+
+### Successful Response
+
+**Status:** `200 OK`
+
+```json
+{
+  "captian": {
+    "_id": "CAPTAIN_ID",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "vehicle": {
+      "color": "black",
+      "plate": "AB12CD3456",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"
+  }
+}
+```
+
+### Error Response
+
+**Status:** `401 Unauthorized`
+
+Returned when the token is missing, invalid, expired, or blacklisted.
+
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+
+## Captain Logout
+
+Logs out the authenticated captain by clearing the `token` cookie and blacklisting the token.
+
+### Endpoint
+
+```http
+GET /captians/logout
 ```
 
 ### Authentication
@@ -362,7 +505,7 @@ Authorization: Bearer JWT_TOKEN
 
 ```json
 {
-  "message": "Logged Out"
+  "message": "Logged out successfully"
 }
 ```
 
