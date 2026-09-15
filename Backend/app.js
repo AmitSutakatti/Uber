@@ -3,6 +3,7 @@ dotenv.config()
 const cors=require('cors')
 const express=require('express')
 const userRoutes=require('./routes/user.routes')
+const captianRoutes=require('./routes/captian.routes')
 const app=express()
 const cookieParser=require('cookie-parser')
 const connectToDb=require('./db/db')
@@ -16,5 +17,5 @@ app.get('/',(req,res)=>{
 })
 
 app.use('/users',userRoutes) //localhost:4000/users/register
-
+app.use('/captians',captianRoutes)
 module.exports=app;

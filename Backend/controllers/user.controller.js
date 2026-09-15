@@ -8,6 +8,10 @@ module.exports.registerUser=async(req,res,next)=>{
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
     }
+    const isUserAlreadyExits=await userModel.findOne({email})
+        if(isUserAlreadyExits){
+            return res.status(400).json({message:"User already exists !"})
+        }
     const {fullname,email,password}=req.body
     const {firstname,lastname}=fullname
 
@@ -32,11 +36,13 @@ module.exports.loginUser=async(req,res,next)=>{
         return res.status(400).json({errors:errors.array()})
 
     }
+
     const {email,password}=req.body
     const user=await userModel.findOne({email}).select('+password')
     if(!user){
         return res.status(401).json({message:"Invalid email or password "})
     }
+
 
     const isMatch=await user.comparePassword(password)
     if(!isMatch){

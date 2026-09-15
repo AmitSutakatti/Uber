@@ -225,6 +225,119 @@ Returned when the token is missing, invalid, expired, or blacklisted.
 }
 ```
 
+## Register Captain
+
+Creates a captain account with vehicle details and returns an authentication token.
+
+> Note: The current API uses the `/captians` path spelling.
+
+### Endpoint
+
+```http
+POST /captians/register
+```
+
+The default server URL is:
+
+```text
+http://localhost:3000/captians/register
+```
+
+### Request Headers
+
+```http
+Content-Type: application/json
+```
+
+### Request Body
+
+All fields are required:
+
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "password": "secret123",
+  "vehicle": {
+    "color": "black",
+    "plate": "AB12CD3456",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+#### Validation Rules
+
+| Field | Requirement |
+| --- | --- |
+| `fullname.firstname` | At least 3 characters |
+| `fullname.lastname` | At least 3 characters |
+| `email` | Must be a valid email address |
+| `password` | At least 6 characters |
+| `vehicle.color` | At least 3 characters |
+| `vehicle.plate` | At least 3 characters |
+| `vehicle.capacity` | An integer of at least 1 |
+| `vehicle.vehicleType` | Must be `car`, `motorcycle`, or `auto` |
+
+### Successful Response
+
+**Status:** `201 Created`
+
+```json
+{
+  "token": "JWT_TOKEN",
+  "captian": {
+    "_id": "CAPTAIN_ID",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "vehicle": {
+      "color": "black",
+      "plate": "AB12CD3456",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"
+  }
+}
+```
+
+### Error Responses
+
+**Status:** `400 Bad Request`
+
+Returned when a field fails validation or the email is already registered.
+
+Validation error example:
+
+```json
+{
+  "errors": [
+    {
+      "type": "field",
+      "value": "x",
+      "msg": "First name must be at least 3 characters long .",
+      "path": "fullname.firstname",
+      "location": "body"
+    }
+  ]
+}
+```
+
+Duplicate email example:
+
+```json
+{
+  "message": "Captian already exists !"
+}
+```
+
 ## Logout User
 
 Logs out the authenticated user by clearing the `token` cookie and invalidating the token.
